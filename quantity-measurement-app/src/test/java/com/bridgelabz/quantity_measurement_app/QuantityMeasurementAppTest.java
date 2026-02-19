@@ -4,48 +4,79 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.bridgelabz.quantity_measurement_app.QuantityMeasurementApp.Feet;
+import com.bridgelabz.quantity_measurement_app.QuantityMeasurementApp.Inches;
 
 public class QuantityMeasurementAppTest {
 
+    // ========================
+    // Feet Test Cases
+    // ========================
+
     @Test
-    void givenSameValue_whenCompared_shouldReturnTrue() {
+    void testFeetEquality_SameValue() {
         Feet first = new Feet(1.0);
         Feet second = new Feet(1.0);
-
-        assertTrue(first.equals(second),
-                "1.0 ft should be equal to 1.0 ft");
+        assertTrue(first.equals(second));
     }
 
     @Test
-    void givenDifferentValue_whenCompared_shouldReturnFalse() {
+    void testFeetEquality_DifferentValue() {
         Feet first = new Feet(1.0);
         Feet second = new Feet(2.0);
-
-        assertFalse(first.equals(second),
-                "1.0 ft should not be equal to 2.0 ft");
+        assertFalse(first.equals(second));
     }
 
     @Test
-    void givenNull_whenCompared_shouldReturnFalse() {
+    void testFeetEquality_NullComparison() {
         Feet first = new Feet(1.0);
-
-        assertFalse(first.equals(null),
-                "Feet object should not be equal to null");
+        assertFalse(first.equals(null));
     }
 
     @Test
-    void givenDifferentClass_whenCompared_shouldReturnFalse() {
+    void testFeetEquality_DifferentClass() {
         Feet first = new Feet(1.0);
-
-        assertFalse(first.equals("1.0"),
-                "Feet object should not be equal to a different class type");
+        assertFalse(first.equals("1.0"));
     }
 
     @Test
-    void givenSameReference_whenCompared_shouldReturnTrue() {
+    void testFeetEquality_SameReference() {
         Feet first = new Feet(1.0);
+        assertTrue(first.equals(first));
+    }
 
-        assertTrue(first.equals(first),
-                "Object should be equal to itself (reflexive property)");
+    // ========================
+    // Inches Test Cases
+    // ========================
+
+    @Test
+    void testInchesEquality_SameValue() {
+        Inches first = new Inches(1.0);
+        Inches second = new Inches(1.0);
+        assertTrue(first.equals(second));
+    }
+
+    @Test
+    void testInchesEquality_DifferentValue() {
+        Inches first = new Inches(1.0);
+        Inches second = new Inches(2.0);
+        assertFalse(first.equals(second));
+    }
+
+    @Test
+    void testInchesEquality_NullComparison() {
+        Inches first = new Inches(1.0);
+        assertFalse(first.equals(null));
+    }
+
+    @Test
+    void testInchesEquality_DifferentClass() {
+        Inches first = new Inches(1.0);
+        assertFalse(first.equals(1.0));
+    }
+
+    @Test
+    void testInchesEquality_SameReference() {
+        Inches first = new Inches(1.0);
+        assertTrue(first.equals(first));
     }
 }
