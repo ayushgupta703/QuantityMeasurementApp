@@ -8,8 +8,8 @@ public class QuantityMeasurementApp {
 
     public static void main(String[] args) {
 
-        Length length1 = new Length(1.0, Length.LengthUnit.FEET);
-        Length length2 = new Length(12.0, Length.LengthUnit.INCHES);
+        Length length1 = new Length(1.0, Length.LengthUnit.YARDS);
+        Length length2 = new Length(36.0, Length.LengthUnit.INCHES);
 
         System.out.println("Are lengths equal? " +
                 demonstrateLengthEquality(length1, length2));
