@@ -81,6 +81,28 @@ public class Length {
         return Double.compare(this.convertToBaseUnit(),
                               other.convertToBaseUnit()) == 0;
     }
+    
+    /**
+     * Adds another Length to this Length.
+     * The result is returned in the unit of this instance.
+     */
+    public Length add(Length other) {
+
+        if (other == null)
+            throw new IllegalArgumentException("Length to add cannot be null");
+
+        // Convert both to base unit (inches)
+        double thisInBase = this.convertToBaseUnit();
+        double otherInBase = other.convertToBaseUnit();
+
+        // Add in base unit
+        double sumInBase = thisInBase + otherInBase;
+
+        // Convert back to this unit
+        double resultValue = sumInBase / this.unit.getConversionFactor();
+
+        return new Length(resultValue, this.unit);
+    }
 
     @Override
     public boolean equals(Object o) {
