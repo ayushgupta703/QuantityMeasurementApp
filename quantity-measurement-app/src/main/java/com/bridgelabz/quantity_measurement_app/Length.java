@@ -3,21 +3,23 @@ package com.bridgelabz.quantity_measurement_app;
 import java.util.Objects;
 
 /**
- * A generic class for representing and comparing lengths in different units.
- * Base unit for conversion is INCHES.
+ * A generic immutable class representing a Length value object.
+ * All conversions are normalized to base unit: INCHES.
  */
 public class Length {
 
     private final double value;
     private final LengthUnit unit;
 
-    /**
-     * Enum representing supported length units.
-     * Conversion factors are defined relative to inches (base unit).
-     */
+    private static final double EPSILON = 1e-6;
+
+    // ----------------------------
+    // ENUM FOR UNITS (UC4)
+    // ----------------------------
     public enum LengthUnit {
-        FEET(12.0),
+
         INCHES(1.0),
+        FEET(12.0),
         YARDS(36.0),
         CENTIMETERS(0.393701);
 
@@ -32,7 +34,11 @@ public class Length {
         }
     }
 
+    // ----------------------------
+    // CONSTRUCTOR
+    // ----------------------------
     public Length(double value, LengthUnit unit) {
+
         if (!Double.isFinite(value))
             throw new IllegalArgumentException("Value must be finite");
 
@@ -43,87 +49,95 @@ public class Length {
         this.unit = unit;
     }
 
-    /**
-     * Converts this length to base unit (inches).
-     */
+    // ----------------------------
+    // GETTERS
+    // ----------------------------
+    public double getValue() {
+        return value;
+    }
+
+    public LengthUnit getUnit() {
+        return unit;
+    }
+
+    // ----------------------------
+    // BASE CONVERSION (PRIVATE)
+    // ----------------------------
     private double convertToBaseUnit() {
         return value * unit.getConversionFactor();
     }
 
-    /**
-     * Static conversion API (UC5 requirement)
-     */
-    public static double convert(double value, LengthUnit source, LengthUnit target) {
-
-        if (!Double.isFinite(value))
-            throw new IllegalArgumentException("Value must be finite");
-
-        if (source == null || target == null)
-            throw new IllegalArgumentException("Units cannot be null");
-
-        double valueInBase = value * source.getConversionFactor();
-        return valueInBase / target.getConversionFactor();
-    }
-
-    /**
-     * Instance conversion method
-     */
+    // ----------------------------
+    // UC5 – CONVERT TO TARGET UNIT
+    // ----------------------------
     public Length convertTo(LengthUnit targetUnit) {
 
         if (targetUnit == null)
             throw new IllegalArgumentException("Target unit cannot be null");
 
-        double convertedValue = convert(this.value, this.unit, targetUnit);
-        return new Length(convertedValue, targetUnit);
+        double baseValue = convertToBaseUnit();
+        double converted = baseValue / targetUnit.getConversionFactor();
+
+        return new Length(converted, targetUnit);
     }
 
-    private boolean compare(Length other) {
-        return Double.compare(this.convertToBaseUnit(),
-                              other.convertToBaseUnit()) == 0;
-    }
-    
-    /**
-     * Adds another Length to this Length.
-     * The result is returned in the unit of this instance.
-     */
+    // ----------------------------
+    // UC6 – ADD (implicit target = this.unit)
+    // ----------------------------
     public Length add(Length other) {
 
         if (other == null)
             throw new IllegalArgumentException("Length to add cannot be null");
 
-        // Convert both to base unit (inches)
-        double thisInBase = this.convertToBaseUnit();
-        double otherInBase = other.convertToBaseUnit();
-
-        // Add in base unit
-        double sumInBase = thisInBase + otherInBase;
-
-        // Convert back to this unit
-        double resultValue = sumInBase / this.unit.getConversionFactor();
+        double sumBase = this.convertToBaseUnit() + other.convertToBaseUnit();
+        double resultValue = sumBase / this.unit.getConversionFactor();
 
         return new Length(resultValue, this.unit);
     }
 
+    // ----------------------------
+    // UC7 – ADD (explicit target unit)
+    // ----------------------------
+    public Length add(Length other, LengthUnit targetUnit) {
+
+        if (other == null || targetUnit == null)
+            throw new IllegalArgumentException("Inputs cannot be null");
+
+        double sumBase = this.convertToBaseUnit() + other.convertToBaseUnit();
+        double resultValue = sumBase / targetUnit.getConversionFactor();
+
+        return new Length(resultValue, targetUnit);
+    }
+
+    // ----------------------------
+    // EQUALITY OVERRIDE (UC3)
+    // ----------------------------
     @Override
     public boolean equals(Object o) {
 
         if (this == o)
             return true;
 
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof Length))
             return false;
 
-        Length other = (Length) o;
-        return compare(other);
+        Length that = (Length) o;
+
+        return Math.abs(this.convertToBaseUnit()
+                - that.convertToBaseUnit()) < EPSILON;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(convertToBaseUnit());
+        return Objects.hash(
+                Math.round(convertToBaseUnit() / EPSILON));
     }
 
+    // ----------------------------
+    // STRING REPRESENTATION
+    // ----------------------------
     @Override
     public String toString() {
-        return String.format("%.2f %s", value, unit);
+        return String.format("%.4f %s", value, unit);
     }
 }
