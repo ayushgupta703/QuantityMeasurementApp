@@ -7,7 +7,7 @@ public class QuantityMeasurementAppTest {
 
     @Test
     void testLengthUnitEnum_FeetConstant() {
-        assertEquals(1.0, LengthUnit.FEET.getConversionFactor());
+        assertEquals(1.0, LengthUnit.FEET.convertToBaseUnit(1));
     }
 
     @Test
@@ -26,67 +26,95 @@ public class QuantityMeasurementAppTest {
 
     @Test
     void testEquality_CrossUnit() {
-        Length l1 = new Length(1.0, LengthUnit.FEET);
-        Length l2 = new Length(12.0, LengthUnit.INCHES);
+
+        Quantity<LengthUnit> l1 =
+                new Quantity<>(1.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> l2 =
+                new Quantity<>(12.0, LengthUnit.INCHES);
 
         assertTrue(l1.equals(l2));
     }
 
     @Test
     void testConversion_YardsToFeet() {
-        Length result = QuantityMeasurementApp
-                .demonstrateLengthConversion(3.0,
-                        LengthUnit.YARDS,
-                        LengthUnit.FEET);
 
-        assertEquals(new Length(9.0, LengthUnit.FEET), result);
+        Quantity<LengthUnit> length =
+                new Quantity<>(3.0, LengthUnit.YARDS);
+
+        Quantity<LengthUnit> result =
+                length.convertTo(LengthUnit.FEET);
+
+        assertEquals(new Quantity<>(9.0, LengthUnit.FEET), result);
     }
 
     @Test
     void testAddition_WithTargetUnit() {
-        Length l1 = new Length(1.0, LengthUnit.FEET);
-        Length l2 = new Length(12.0, LengthUnit.INCHES);
 
-        Length result = l1.add(l2, LengthUnit.FEET);
+        Quantity<LengthUnit> l1 =
+                new Quantity<>(1.0, LengthUnit.FEET);
 
-        assertEquals(new Length(2.0, LengthUnit.FEET), result);
+        Quantity<LengthUnit> l2 =
+                new Quantity<>(12.0, LengthUnit.INCHES);
+
+        Quantity<LengthUnit> result =
+                l1.add(l2, LengthUnit.FEET);
+
+        assertEquals(new Quantity<>(2.0, LengthUnit.FEET), result);
     }
 
     @Test
     void testNullUnitThrows() {
+
         assertThrows(IllegalArgumentException.class,
-                () -> new Length(1.0, null));
+                () -> new Quantity<>(1.0, null));
     }
 
     @Test
     void testInvalidValueThrows() {
+
         assertThrows(IllegalArgumentException.class,
-                () -> new Length(Double.NaN, LengthUnit.FEET));
+                () -> new Quantity<>(Double.NaN, LengthUnit.FEET));
     }
-    
+
+    // WEIGHT TESTS
+
     @Test
     void testWeightEquality_KgToGram() {
 
-        Weight w1 = new Weight(1.0, WeightUnit.KILOGRAM);
-        Weight w2 = new Weight(1000.0, WeightUnit.GRAM);
+        Quantity<WeightUnit> w1 =
+                new Quantity<>(1.0, WeightUnit.KILOGRAM);
+
+        Quantity<WeightUnit> w2 =
+                new Quantity<>(1000.0, WeightUnit.GRAM);
 
         assertTrue(w1.equals(w2));
     }
 
     @Test
     void testWeightConversion_KgToGram() {
-        Weight result = QuantityMeasurementApp.demonstrateWeightConversion(1.0,WeightUnit.KILOGRAM,WeightUnit.GRAM);
-        assertEquals(new Weight(1000.0, WeightUnit.GRAM), result);
+
+        Quantity<WeightUnit> weight =
+                new Quantity<>(1.0, WeightUnit.KILOGRAM);
+
+        Quantity<WeightUnit> result =
+                weight.convertTo(WeightUnit.GRAM);
+
+        assertEquals(new Quantity<>(1000.0, WeightUnit.GRAM), result);
     }
 
     @Test
     void testWeightAddition_KgPlusGram() {
 
-        Weight w1 = new Weight(1.0, WeightUnit.KILOGRAM);
-        Weight w2 = new Weight(1000.0, WeightUnit.GRAM);
+        Quantity<WeightUnit> w1 =
+                new Quantity<>(1.0, WeightUnit.KILOGRAM);
 
-        Weight result = w1.add(w2);
+        Quantity<WeightUnit> w2 =
+                new Quantity<>(1000.0, WeightUnit.GRAM);
 
-        assertEquals(new Weight(2.0, WeightUnit.KILOGRAM), result);
+        Quantity<WeightUnit> result =
+                w1.add(w2);
+
+        assertEquals(new Quantity<>(2.0, WeightUnit.KILOGRAM), result);
     }
 }

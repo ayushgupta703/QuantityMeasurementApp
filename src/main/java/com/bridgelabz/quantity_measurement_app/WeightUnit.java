@@ -1,6 +1,6 @@
 package com.bridgelabz.quantity_measurement_app;
 
-public enum WeightUnit {
+public enum WeightUnit implements Measurable {
 
     KILOGRAM(1.0),
     GRAM(0.001),
@@ -12,16 +12,12 @@ public enum WeightUnit {
         this.conversionFactorToKg = conversionFactorToKg;
     }
 
-    public double getConversionFactor() {
-        return conversionFactorToKg;
-    }
-
-    // convert value → base unit (kg)
+    @Override
     public double convertToBaseUnit(double value) {
         return value * conversionFactorToKg;
     }
 
-    // convert base unit → this unit
+    @Override
     public double convertFromBaseUnit(double baseValue) {
         return baseValue / conversionFactorToKg;
     }

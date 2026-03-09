@@ -1,6 +1,6 @@
 package com.bridgelabz.quantity_measurement_app;
 
-public enum LengthUnit {
+public enum LengthUnit implements Measurable {
 
     FEET(1.0),
     INCHES(1.0 / 12.0),
@@ -13,16 +13,12 @@ public enum LengthUnit {
         this.conversionFactorToFeet = conversionFactorToFeet;
     }
 
-    public double getConversionFactor() {
-        return conversionFactorToFeet;
-    }
-
-    // Convert value in this unit → base unit (FEET)
+    @Override
     public double convertToBaseUnit(double value) {
         return value * conversionFactorToFeet;
     }
 
-    // Convert value from base unit (FEET) → this unit
+    @Override
     public double convertFromBaseUnit(double baseValue) {
         return baseValue / conversionFactorToFeet;
     }

@@ -1,11 +1,11 @@
 package com.bridgelabz.quantity_measurement_app;
 
-public class Weight {
+public class Quantity<T extends Measurable> {
 
     private final double value;
-    private final WeightUnit unit;
+    private final T unit;
 
-    public Weight(double value, WeightUnit unit) {
+    public Quantity(double value, T unit) {
 
         if (unit == null)
             throw new IllegalArgumentException("Unit cannot be null");
@@ -17,7 +17,7 @@ public class Weight {
         this.unit = unit;
     }
 
-    public Weight convertTo(WeightUnit targetUnit) {
+    public Quantity<T> convertTo(T targetUnit) {
 
         if (targetUnit == null)
             throw new IllegalArgumentException("Target unit cannot be null");
@@ -25,29 +25,29 @@ public class Weight {
         double baseValue = unit.convertToBaseUnit(value);
         double converted = targetUnit.convertFromBaseUnit(baseValue);
 
-        return new Weight(round(converted), targetUnit);
+        return new Quantity<>(round(converted), targetUnit);
     }
 
-    public Weight add(Weight other) {
+    public Quantity<T> add(Quantity<T> other) {
         return add(other, this.unit);
     }
 
-    public Weight add(Weight other, WeightUnit targetUnit) {
+    public Quantity<T> add(Quantity<T> other, T targetUnit) {
 
         if (other == null)
-            throw new IllegalArgumentException("Weight cannot be null");
+            throw new IllegalArgumentException("Quantity cannot be null");
 
-        double base1 = this.unit.convertToBaseUnit(this.value);
+        double base1 = unit.convertToBaseUnit(value);
         double base2 = other.unit.convertToBaseUnit(other.value);
 
         double sumBase = base1 + base2;
 
         double finalValue = targetUnit.convertFromBaseUnit(sumBase);
 
-        return new Weight(round(finalValue), targetUnit);
+        return new Quantity<>(round(finalValue), targetUnit);
     }
 
-    private boolean compare(Weight other) {
+    private boolean compare(Quantity<?> other) {
 
         double base1 = unit.convertToBaseUnit(value);
         double base2 = other.unit.convertToBaseUnit(other.value);
@@ -58,13 +58,10 @@ public class Weight {
     @Override
     public boolean equals(Object obj) {
 
-        if (this == obj)
-            return true;
+        if (this == obj) return true;
 
-        if (obj == null || getClass() != obj.getClass())
+        if (!(obj instanceof Quantity<?> other))
             return false;
-
-        Weight other = (Weight) obj;
 
         return compare(other);
     }
