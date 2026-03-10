@@ -36,6 +36,9 @@ public class Quantity<T extends Measurable> {
 
         if (other == null)
             throw new IllegalArgumentException("Quantity cannot be null");
+        
+        if (!unit.getClass().equals(other.unit.getClass()))
+            throw new IllegalArgumentException("Cross-category operation not allowed");
 
         double base1 = unit.convertToBaseUnit(value);
         double base2 = other.unit.convertToBaseUnit(other.value);
@@ -45,6 +48,46 @@ public class Quantity<T extends Measurable> {
         double finalValue = targetUnit.convertFromBaseUnit(sumBase);
 
         return new Quantity<>(round(finalValue), targetUnit);
+    }
+
+    public Quantity<T> subtract(Quantity<T> other) {
+    	return subtract(other, this.unit);
+    }
+    
+    public Quantity<T> subtract(Quantity<T> other, T targetUnit) {
+    	
+    	if (other == null)
+    		throw new IllegalArgumentException("Quantity cannot be null");
+    	
+    	if (!unit.getClass().equals(other.unit.getClass()))
+    	    throw new IllegalArgumentException("Cross-category operation not allowed");
+    	
+    	double base1 = unit.convertToBaseUnit(value);
+    	double base2 = other.unit.convertToBaseUnit(other.value);
+    	
+    	double subtractBase = base1 - base2;
+    	
+    	double finalValue = targetUnit.convertFromBaseUnit(subtractBase);
+    	
+    	return new Quantity<>(round(finalValue), targetUnit);
+    }
+    
+    public double divide(Quantity<T> other) {
+    	
+    	if (other == null)
+    		throw new IllegalArgumentException("Quantity cannot be null");
+    	
+    	if (!unit.getClass().equals(other.unit.getClass()))
+    	    throw new IllegalArgumentException("Cross-category operation not allowed");
+    	
+    	double base1 = unit.convertToBaseUnit(value);
+    	double base2 = other.unit.convertToBaseUnit(other.value);
+    	
+    	if (base2 == 0) {
+    		throw new ArithmeticException("Divisor Cannot Be Zero");
+    	}
+    	
+    	return base1 / base2;
     }
 
     private boolean compare(Quantity<?> other) {
@@ -62,8 +105,17 @@ public class Quantity<T extends Measurable> {
 
         if (!(obj instanceof Quantity<?> other))
             return false;
+        
+        if (!unit.getClass().equals(other.unit.getClass())) {
+        	return false;
+        }
 
         return compare(other);
+    }
+    
+    @Override
+    public int hashCode() {
+    	return Double.hashCode(value) + unit.hashCode();
     }
 
     @Override

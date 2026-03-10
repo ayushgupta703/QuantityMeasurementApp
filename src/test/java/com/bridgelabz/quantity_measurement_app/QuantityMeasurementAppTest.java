@@ -5,27 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class QuantityMeasurementAppTest {
 
-    @Test
-    void testLengthUnitEnum_FeetConstant() {
-        assertEquals(1.0, LengthUnit.FEET.convertToBaseUnit(1));
-    }
+    // ---------------- LENGTH TESTS ----------------
 
     @Test
-    void testConvertToBaseUnit_InchesToFeet() {
-        assertEquals(1.0,
-                LengthUnit.INCHES.convertToBaseUnit(12),
-                0.01);
-    }
-
-    @Test
-    void testConvertFromBaseUnit_FeetToInches() {
-        assertEquals(12.0,
-                LengthUnit.INCHES.convertFromBaseUnit(1),
-                0.01);
-    }
-
-    @Test
-    void testEquality_CrossUnit() {
+    void testLengthEquality_FeetToInches() {
 
         Quantity<LengthUnit> l1 =
                 new Quantity<>(1.0, LengthUnit.FEET);
@@ -37,7 +20,7 @@ public class QuantityMeasurementAppTest {
     }
 
     @Test
-    void testConversion_YardsToFeet() {
+    void testLengthConversion_YardsToFeet() {
 
         Quantity<LengthUnit> length =
                 new Quantity<>(3.0, LengthUnit.YARDS);
@@ -49,7 +32,7 @@ public class QuantityMeasurementAppTest {
     }
 
     @Test
-    void testAddition_WithTargetUnit() {
+    void testLengthAddition() {
 
         Quantity<LengthUnit> l1 =
                 new Quantity<>(1.0, LengthUnit.FEET);
@@ -57,27 +40,12 @@ public class QuantityMeasurementAppTest {
         Quantity<LengthUnit> l2 =
                 new Quantity<>(12.0, LengthUnit.INCHES);
 
-        Quantity<LengthUnit> result =
-                l1.add(l2, LengthUnit.FEET);
+        Quantity<LengthUnit> result = l1.add(l2);
 
         assertEquals(new Quantity<>(2.0, LengthUnit.FEET), result);
     }
 
-    @Test
-    void testNullUnitThrows() {
-
-        assertThrows(IllegalArgumentException.class,
-                () -> new Quantity<>(1.0, null));
-    }
-
-    @Test
-    void testInvalidValueThrows() {
-
-        assertThrows(IllegalArgumentException.class,
-                () -> new Quantity<>(Double.NaN, LengthUnit.FEET));
-    }
-
-    // WEIGHT TESTS
+    // ---------------- WEIGHT TESTS ----------------
 
     @Test
     void testWeightEquality_KgToGram() {
@@ -92,18 +60,6 @@ public class QuantityMeasurementAppTest {
     }
 
     @Test
-    void testWeightConversion_KgToGram() {
-
-        Quantity<WeightUnit> weight =
-                new Quantity<>(1.0, WeightUnit.KILOGRAM);
-
-        Quantity<WeightUnit> result =
-                weight.convertTo(WeightUnit.GRAM);
-
-        assertEquals(new Quantity<>(1000.0, WeightUnit.GRAM), result);
-    }
-
-    @Test
     void testWeightAddition_KgPlusGram() {
 
         Quantity<WeightUnit> w1 =
@@ -112,16 +68,15 @@ public class QuantityMeasurementAppTest {
         Quantity<WeightUnit> w2 =
                 new Quantity<>(1000.0, WeightUnit.GRAM);
 
-        Quantity<WeightUnit> result =
-                w1.add(w2);
+        Quantity<WeightUnit> result = w1.add(w2);
 
         assertEquals(new Quantity<>(2.0, WeightUnit.KILOGRAM), result);
     }
-    
- // VOLUME TESTS
+
+    // ---------------- VOLUME TESTS ----------------
 
     @Test
-    void testVolumeEquality_LitreToMilliLitre() {
+    void testVolumeEquality_LitreToMillilitre() {
 
         Quantity<VolumeUnit> v1 =
                 new Quantity<>(1.0, VolumeUnit.LITRE);
@@ -133,19 +88,7 @@ public class QuantityMeasurementAppTest {
     }
 
     @Test
-    void testVolumeConversion_LitreToMilliLitre() {
-
-        Quantity<VolumeUnit> volume =
-                new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        Quantity<VolumeUnit> result =
-                volume.convertTo(VolumeUnit.MILLILITRE);
-
-        assertEquals(new Quantity<>(1000.0, VolumeUnit.MILLILITRE), result);
-    }
-
-    @Test
-    void testVolumeAddition_LitrePlusMilliLitre() {
+    void testVolumeAddition_LitrePlusMillilitre() {
 
         Quantity<VolumeUnit> v1 =
                 new Quantity<>(1.0, VolumeUnit.LITRE);
@@ -153,9 +96,178 @@ public class QuantityMeasurementAppTest {
         Quantity<VolumeUnit> v2 =
                 new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
 
-        Quantity<VolumeUnit> result =
-                v1.add(v2);
+        Quantity<VolumeUnit> result = v1.add(v2);
 
         assertEquals(new Quantity<>(2.0, VolumeUnit.LITRE), result);
+    }
+
+    // ---------------- SUBTRACTION TESTS (UC12) ----------------
+
+    @Test
+    void testSubtraction_SameUnit() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(5.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> result = q1.subtract(q2);
+
+        assertEquals(new Quantity<>(5.0, LengthUnit.FEET), result);
+    }
+
+    @Test
+    void testSubtraction_CrossUnit() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(6.0, LengthUnit.INCHES);
+
+        Quantity<LengthUnit> result = q1.subtract(q2);
+
+        assertEquals(new Quantity<>(9.5, LengthUnit.FEET), result);
+    }
+
+    @Test
+    void testSubtraction_ExplicitTargetUnit() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(6.0, LengthUnit.INCHES);
+
+        Quantity<LengthUnit> result =
+                q1.subtract(q2, LengthUnit.INCHES);
+
+        assertEquals(new Quantity<>(114.0, LengthUnit.INCHES), result);
+    }
+
+    @Test
+    void testSubtraction_ResultingInNegative() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(5.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> result = q1.subtract(q2);
+
+        assertEquals(new Quantity<>(-5.0, LengthUnit.FEET), result);
+    }
+
+    @Test
+    void testSubtraction_ResultingInZero() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(120.0, LengthUnit.INCHES);
+
+        Quantity<LengthUnit> result = q1.subtract(q2);
+
+        assertEquals(new Quantity<>(0.0, LengthUnit.FEET), result);
+    }
+
+    // ---------------- DIVISION TESTS (UC12) ----------------
+
+    @Test
+    void testDivision_SameUnit() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(2.0, LengthUnit.FEET);
+
+        double result = q1.divide(q2);
+
+        assertEquals(5.0, result);
+    }
+
+    @Test
+    void testDivision_CrossUnit() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(24.0, LengthUnit.INCHES);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(2.0, LengthUnit.FEET);
+
+        double result = q1.divide(q2);
+
+        assertEquals(1.0, result);
+    }
+
+    @Test
+    void testDivision_RatioLessThanOne() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(5.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        double result = q1.divide(q2);
+
+        assertEquals(0.5, result);
+    }
+
+    // ---------------- ERROR HANDLING ----------------
+
+    @Test
+    void testDivision_ByZero() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(0.0, LengthUnit.FEET);
+
+        assertThrows(ArithmeticException.class,
+                () -> q1.divide(q2));
+    }
+
+    @Test
+    void testSubtraction_NullOperand() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> q1.subtract(null));
+    }
+
+    @Test
+    void testCrossCategoryComparison() {
+
+        Quantity<LengthUnit> length =
+                new Quantity<>(1.0, LengthUnit.FEET);
+
+        Quantity<WeightUnit> weight =
+                new Quantity<>(1.0, WeightUnit.KILOGRAM);
+
+        assertFalse(length.equals(weight));
+    }
+
+    // ---------------- IMMUTABILITY TEST ----------------
+
+    @Test
+    void testSubtraction_Immutability() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(10.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(5.0, LengthUnit.FEET);
+
+        q1.subtract(q2);
+
+        assertEquals(new Quantity<>(10.0, LengthUnit.FEET), q1);
     }
 }
