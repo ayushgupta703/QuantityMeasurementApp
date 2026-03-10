@@ -10,7 +10,7 @@ public class QuantityMeasurementApp {
 
         System.out.println("Is Length Equal?: " + l1.equals(l2));
         
-        System.out.println("Weight Conversion (KiloGram -> Gram)" + l1.convertTo(LengthUnit.INCHES));
+        System.out.println("Length Conversion (Feet -> Inches): " + l1.convertTo(LengthUnit.INCHES));
         
         System.out.println("Addition: " + l1.add(l2));
         System.out.println("Addition: " + l1.add(l2, LengthUnit.YARDS));
@@ -28,7 +28,7 @@ public class QuantityMeasurementApp {
 
         System.out.println("Is Weight Equal?: " + w1.equals(w2));
         
-        System.out.println("Weight Conversion (KiloGram -> Gram)" + w1.convertTo(WeightUnit.GRAM));
+        System.out.println("Weight Conversion (KiloGram -> Gram): " + w1.convertTo(WeightUnit.GRAM));
         
         System.out.println("Addition: " + w1.add(w2));
         System.out.println("Addition: " + w1.add(w2, WeightUnit.POUND));
@@ -46,7 +46,7 @@ public class QuantityMeasurementApp {
 
         System.out.println("Is Volume Equal?: " + v1.equals(v2));
         
-        System.out.println("Weight Conversion (Litre -> MilliLitre)" + v1.convertTo(VolumeUnit.MILLILITRE));
+        System.out.println("Weight Conversion (Litre -> MilliLitre): " + v1.convertTo(VolumeUnit.MILLILITRE));
         
         System.out.println("Addition: " + v1.add(v2));
         System.out.println("Addition: " + v1.add(v2, VolumeUnit.GALLON));
@@ -55,5 +55,17 @@ public class QuantityMeasurementApp {
         System.out.println("Subtraction: " + v1.subtract(v2, VolumeUnit.GALLON));
         
         System.out.println("Division: " + v1.divide(v2));
+        
+        System.out.println("\n----------------------------------------\n");
+        
+        Quantity<TemperatureUnit> t1 = new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+
+        Quantity<TemperatureUnit> t2 = new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
+
+        System.out.println("Is Temperature Equal?: " + t1.equals(t2));
+
+        Quantity<TemperatureUnit> converted = t1.convertTo(TemperatureUnit.FAHRENHEIT);
+
+        System.out.println("Temperature Conversion (Celsius -> Fahrenheit): " + converted);
     }
 }

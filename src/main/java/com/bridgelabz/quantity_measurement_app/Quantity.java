@@ -107,6 +107,8 @@ public class Quantity<T extends Measurable> {
             Quantity<T> other,
             ArithmeticOperation operation) {
 
+    	unit.validateOperationSupport(operation.name());
+
         double base1 = unit.convertToBaseUnit(value);
         double base2 = other.unit.convertToBaseUnit(other.value);
 
