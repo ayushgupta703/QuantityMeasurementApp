@@ -117,4 +117,45 @@ public class QuantityMeasurementAppTest {
 
         assertEquals(new Quantity<>(2.0, WeightUnit.KILOGRAM), result);
     }
+    
+ // VOLUME TESTS
+
+    @Test
+    void testVolumeEquality_LitreToMilliLitre() {
+
+        Quantity<VolumeUnit> v1 =
+                new Quantity<>(1.0, VolumeUnit.LITRE);
+
+        Quantity<VolumeUnit> v2 =
+                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+
+        assertTrue(v1.equals(v2));
+    }
+
+    @Test
+    void testVolumeConversion_LitreToMilliLitre() {
+
+        Quantity<VolumeUnit> volume =
+                new Quantity<>(1.0, VolumeUnit.LITRE);
+
+        Quantity<VolumeUnit> result =
+                volume.convertTo(VolumeUnit.MILLILITRE);
+
+        assertEquals(new Quantity<>(1000.0, VolumeUnit.MILLILITRE), result);
+    }
+
+    @Test
+    void testVolumeAddition_LitrePlusMilliLitre() {
+
+        Quantity<VolumeUnit> v1 =
+                new Quantity<>(1.0, VolumeUnit.LITRE);
+
+        Quantity<VolumeUnit> v2 =
+                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+
+        Quantity<VolumeUnit> result =
+                v1.add(v2);
+
+        assertEquals(new Quantity<>(2.0, VolumeUnit.LITRE), result);
+    }
 }
