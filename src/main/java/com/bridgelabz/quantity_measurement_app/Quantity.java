@@ -28,67 +28,108 @@ public class Quantity<T extends Measurable> {
         return new Quantity<>(round(converted), targetUnit);
     }
 
+    // ---------------- ENUM ----------------
+
+    private enum ArithmeticOperation {
+        ADD,
+        SUBTRACT,
+        DIVIDE
+    }
+
+    // ---------------- ADD ----------------
+
     public Quantity<T> add(Quantity<T> other) {
         return add(other, this.unit);
     }
 
     public Quantity<T> add(Quantity<T> other, T targetUnit) {
 
-        if (other == null)
-            throw new IllegalArgumentException("Quantity cannot be null");
-        
-        if (!unit.getClass().equals(other.unit.getClass()))
-            throw new IllegalArgumentException("Cross-category operation not allowed");
+        validateArithmeticOperands(other, targetUnit, true);
 
-        double base1 = unit.convertToBaseUnit(value);
-        double base2 = other.unit.convertToBaseUnit(other.value);
+        double resultBase =
+                performBaseArithmetic(other, ArithmeticOperation.ADD);
 
-        double sumBase = base1 + base2;
-
-        double finalValue = targetUnit.convertFromBaseUnit(sumBase);
+        double finalValue = targetUnit.convertFromBaseUnit(resultBase);
 
         return new Quantity<>(round(finalValue), targetUnit);
     }
 
+    // ---------------- SUBTRACT ----------------
+
     public Quantity<T> subtract(Quantity<T> other) {
-    	return subtract(other, this.unit);
+        return subtract(other, this.unit);
     }
-    
+
     public Quantity<T> subtract(Quantity<T> other, T targetUnit) {
-    	
-    	if (other == null)
-    		throw new IllegalArgumentException("Quantity cannot be null");
-    	
-    	if (!unit.getClass().equals(other.unit.getClass()))
-    	    throw new IllegalArgumentException("Cross-category operation not allowed");
-    	
-    	double base1 = unit.convertToBaseUnit(value);
-    	double base2 = other.unit.convertToBaseUnit(other.value);
-    	
-    	double subtractBase = base1 - base2;
-    	
-    	double finalValue = targetUnit.convertFromBaseUnit(subtractBase);
-    	
-    	return new Quantity<>(round(finalValue), targetUnit);
+
+        validateArithmeticOperands(other, targetUnit, true);
+
+        double resultBase =
+                performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
+
+        double finalValue = targetUnit.convertFromBaseUnit(resultBase);
+
+        return new Quantity<>(round(finalValue), targetUnit);
     }
-    
+
+    // ---------------- DIVIDE ----------------
+
     public double divide(Quantity<T> other) {
-    	
-    	if (other == null)
-    		throw new IllegalArgumentException("Quantity cannot be null");
-    	
-    	if (!unit.getClass().equals(other.unit.getClass()))
-    	    throw new IllegalArgumentException("Cross-category operation not allowed");
-    	
-    	double base1 = unit.convertToBaseUnit(value);
-    	double base2 = other.unit.convertToBaseUnit(other.value);
-    	
-    	if (base2 == 0) {
-    		throw new ArithmeticException("Divisor Cannot Be Zero");
-    	}
-    	
-    	return base1 / base2;
+
+        validateArithmeticOperands(other, null, false);
+
+        return performBaseArithmetic(other, ArithmeticOperation.DIVIDE);
     }
+
+    // ---------------- VALIDATION ----------------
+
+    private void validateArithmeticOperands(
+            Quantity<T> other,
+            T targetUnit,
+            boolean targetUnitRequired) {
+
+        if (other == null)
+            throw new IllegalArgumentException("Quantity cannot be null");
+
+        if (!unit.getClass().equals(other.unit.getClass()))
+            throw new IllegalArgumentException("Cross-category operation not allowed");
+
+        if (targetUnitRequired && targetUnit == null)
+            throw new IllegalArgumentException("Target unit cannot be null");
+
+        if (!Double.isFinite(value) || !Double.isFinite(other.value))
+            throw new IllegalArgumentException("Invalid numeric value");
+    }
+
+    // ---------------- ARITHMETIC OPERATION ----------------
+
+    private double performBaseArithmetic(
+            Quantity<T> other,
+            ArithmeticOperation operation) {
+
+        double base1 = unit.convertToBaseUnit(value);
+        double base2 = other.unit.convertToBaseUnit(other.value);
+
+        switch (operation) {
+
+            case ADD:
+                return base1 + base2;
+
+            case SUBTRACT:
+                return base1 - base2;
+
+            case DIVIDE:
+                if (base2 == 0)
+                    throw new ArithmeticException("Divisor Cannot Be Zero");
+                return base1 / base2;
+
+            default:
+                throw new IllegalStateException("Unexpected operation");
+        }
+    }
+
+
+    // ---------------- EQUALITY ----------------
 
     private boolean compare(Quantity<?> other) {
 
@@ -101,21 +142,21 @@ public class Quantity<T extends Measurable> {
     @Override
     public boolean equals(Object obj) {
 
-        if (this == obj) return true;
+        if (this == obj)
+            return true;
 
         if (!(obj instanceof Quantity<?> other))
             return false;
-        
-        if (!unit.getClass().equals(other.unit.getClass())) {
-        	return false;
-        }
+
+        if (!unit.getClass().equals(other.unit.getClass()))
+            return false;
 
         return compare(other);
     }
-    
+
     @Override
     public int hashCode() {
-    	return Double.hashCode(value) + unit.hashCode();
+        return Double.hashCode(value) + unit.hashCode();
     }
 
     @Override
