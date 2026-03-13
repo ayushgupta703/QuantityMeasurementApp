@@ -1,12 +1,12 @@
-package com.bridgelabz.quantity_measurement_app;
+package com.bridgelabz.quantity_measurement_app.model;
 
 public interface Measurable {
 
     double convertToBaseUnit(double value);
 
     double convertFromBaseUnit(double baseValue);
-    
- // default lambda: arithmetic supported
+
+    // default arithmetic support
     SupportsArithmetic supportsArithmetic = () -> true;
 
     default boolean supportsArithmetic() {
@@ -14,6 +14,10 @@ public interface Measurable {
     }
 
     default void validateOperationSupport(String operation) {
-        // default implementation allows operations
+        // default allows arithmetic
+    }
+
+    default String getMeasurementType() {
+        return this.getClass().getSimpleName();
     }
 }

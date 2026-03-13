@@ -1,6 +1,13 @@
 package com.bridgelabz.quantity_measurement_app;
 
 import org.junit.jupiter.api.Test;
+
+import com.bridgelabz.quantity_measurement_app.model.LengthUnit;
+import com.bridgelabz.quantity_measurement_app.model.Quantity;
+import com.bridgelabz.quantity_measurement_app.model.TemperatureUnit;
+import com.bridgelabz.quantity_measurement_app.model.VolumeUnit;
+import com.bridgelabz.quantity_measurement_app.model.WeightUnit;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class QuantityMeasurementAppTest {

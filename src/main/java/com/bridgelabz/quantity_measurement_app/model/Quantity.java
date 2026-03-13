@@ -1,4 +1,4 @@
-package com.bridgelabz.quantity_measurement_app;
+package com.bridgelabz.quantity_measurement_app.model;
 
 public class Quantity<T extends Measurable> {
 

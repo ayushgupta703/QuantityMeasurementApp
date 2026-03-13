@@ -1,18 +1,18 @@
-package com.bridgelabz.quantity_measurement_app;
+package com.bridgelabz.quantity_measurement_app.model;
 
-public enum WeightUnit implements Measurable {
+public enum VolumeUnit implements Measurable {
+	LITRE(1.0),
+	MILLILITRE(0.001),
+	GALLON(3.78541);
+	
+	
+	private final double conversionFactorToKg;
 
-    KILOGRAM(1.0),
-    GRAM(0.001),
-    POUND(0.453592);
-
-    private final double conversionFactorToKg;
-
-    WeightUnit(double conversionFactorToKg) {
+    VolumeUnit(double conversionFactorToKg) {
         this.conversionFactorToKg = conversionFactorToKg;
     }
-
-    @Override
+	
+	@Override
     public double convertToBaseUnit(double value) {
         return value * conversionFactorToKg;
     }
