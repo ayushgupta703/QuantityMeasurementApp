@@ -2,25 +2,83 @@ package com.bridgelabz.quantity_measurement_app.model;
 
 public class QuantityMeasurementEntity {
 
-    private final String operation;
-    private final Object operand1;
-    private final Object operand2;
-    private final Object result;
+    private int id;
+    private double value;
+    private String unit;
+    private String measurementType;
+    private String operation;
+    private String result;
 
-    public QuantityMeasurementEntity(
-            String operation,
-            Object operand1,
-            Object operand2,
-            Object result) {
+    public QuantityMeasurementEntity() {}
 
+    public QuantityMeasurementEntity(double value, String unit,
+                                     String measurementType,
+                                     String operation,
+                                     String result) {
+        this.value = value;
+        this.unit = unit;
+        this.measurementType = measurementType;
         this.operation = operation;
-        this.operand1 = operand1;
-        this.operand2 = operand2;
+        this.result = result;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public String getMeasurementType() {
+        return measurementType;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public void setMeasurementType(String measurementType) {
+        this.measurementType = measurementType;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public void setResult(String result) {
         this.result = result;
     }
 
     @Override
     public String toString() {
-        return operation + " -> " + operand1 + " , " + operand2 + " = " + result;
+        return "QuantityMeasurementEntity{" +
+                "id=" + id +
+                ", value=" + value +
+                ", unit='" + unit + '\'' +
+                ", measurementType='" + measurementType + '\'' +
+                ", operation='" + operation + '\'' +
+                ", result='" + result + '\'' +
+                '}';
     }
 }

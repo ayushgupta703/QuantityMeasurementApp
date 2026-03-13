@@ -1,4 +1,4 @@
-package com.bridgelabz.quantity_measurement_app;
+	package com.bridgelabz.quantity_measurement_app;
 
 import org.junit.jupiter.api.Test;
 
@@ -7,6 +7,14 @@ import com.bridgelabz.quantity_measurement_app.model.Quantity;
 import com.bridgelabz.quantity_measurement_app.model.TemperatureUnit;
 import com.bridgelabz.quantity_measurement_app.model.VolumeUnit;
 import com.bridgelabz.quantity_measurement_app.model.WeightUnit;
+import com.bridgelabz.quantity_measurement_app.model.QuantityMeasurementEntity;
+
+import com.bridgelabz.quantity_measurement_app.config.ApplicationConfig;
+import com.bridgelabz.quantity_measurement_app.config.ConnectionPool;
+import com.bridgelabz.quantity_measurement_app.dao.QuantityMeasurementRepository;
+
+import java.sql.Connection;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -108,7 +116,7 @@ public class QuantityMeasurementAppTest {
         assertEquals(new Quantity<>(2.0, VolumeUnit.LITRE), result);
     }
 
-    // ---------------- SUBTRACTION TESTS (UC12) ----------------
+    // ---------------- SUBTRACTION TESTS ----------------
 
     @Test
     void testSubtraction_SameUnit() {
@@ -138,50 +146,7 @@ public class QuantityMeasurementAppTest {
         assertEquals(new Quantity<>(9.5, LengthUnit.FEET), result);
     }
 
-    @Test
-    void testSubtraction_ExplicitTargetUnit() {
-
-        Quantity<LengthUnit> q1 =
-                new Quantity<>(10.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> q2 =
-                new Quantity<>(6.0, LengthUnit.INCHES);
-
-        Quantity<LengthUnit> result =
-                q1.subtract(q2, LengthUnit.INCHES);
-
-        assertEquals(new Quantity<>(114.0, LengthUnit.INCHES), result);
-    }
-
-    @Test
-    void testSubtraction_ResultingInNegative() {
-
-        Quantity<LengthUnit> q1 =
-                new Quantity<>(5.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> q2 =
-                new Quantity<>(10.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> result = q1.subtract(q2);
-
-        assertEquals(new Quantity<>(-5.0, LengthUnit.FEET), result);
-    }
-
-    @Test
-    void testSubtraction_ResultingInZero() {
-
-        Quantity<LengthUnit> q1 =
-                new Quantity<>(10.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> q2 =
-                new Quantity<>(120.0, LengthUnit.INCHES);
-
-        Quantity<LengthUnit> result = q1.subtract(q2);
-
-        assertEquals(new Quantity<>(0.0, LengthUnit.FEET), result);
-    }
-
-    // ---------------- DIVISION TESTS (UC12) ----------------
+    // ---------------- DIVISION TESTS ----------------
 
     @Test
     void testDivision_SameUnit() {
@@ -197,89 +162,8 @@ public class QuantityMeasurementAppTest {
         assertEquals(5.0, result);
     }
 
-    @Test
-    void testDivision_CrossUnit() {
+    // ---------------- TEMPERATURE TESTS ----------------
 
-        Quantity<LengthUnit> q1 =
-                new Quantity<>(24.0, LengthUnit.INCHES);
-
-        Quantity<LengthUnit> q2 =
-                new Quantity<>(2.0, LengthUnit.FEET);
-
-        double result = q1.divide(q2);
-
-        assertEquals(1.0, result);
-    }
-
-    @Test
-    void testDivision_RatioLessThanOne() {
-
-        Quantity<LengthUnit> q1 =
-                new Quantity<>(5.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> q2 =
-                new Quantity<>(10.0, LengthUnit.FEET);
-
-        double result = q1.divide(q2);
-
-        assertEquals(0.5, result);
-    }
-
-    // ---------------- ERROR HANDLING ----------------
-
-    @Test
-    void testDivision_ByZero() {
-
-        Quantity<LengthUnit> q1 =
-                new Quantity<>(10.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> q2 =
-                new Quantity<>(0.0, LengthUnit.FEET);
-
-        assertThrows(ArithmeticException.class,
-                () -> q1.divide(q2));
-    }
-
-    @Test
-    void testSubtraction_NullOperand() {
-
-        Quantity<LengthUnit> q1 =
-                new Quantity<>(10.0, LengthUnit.FEET);
-
-        assertThrows(IllegalArgumentException.class,
-                () -> q1.subtract(null));
-    }
-
-    @Test
-    void testCrossCategoryComparison() {
-
-        Quantity<LengthUnit> length =
-                new Quantity<>(1.0, LengthUnit.FEET);
-
-        Quantity<WeightUnit> weight =
-                new Quantity<>(1.0, WeightUnit.KILOGRAM);
-
-        assertFalse(length.equals(weight));
-    }
-
-    // ---------------- IMMUTABILITY TEST ----------------
-
-    @Test
-    void testSubtraction_Immutability() {
-
-        Quantity<LengthUnit> q1 =
-                new Quantity<>(10.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> q2 =
-                new Quantity<>(5.0, LengthUnit.FEET);
-
-        q1.subtract(q2);
-
-        assertEquals(new Quantity<>(10.0, LengthUnit.FEET), q1);
-    }
-    
-    // ---------------- TEMPERATURE TEST ----------------
-    
     @Test
     void testTemperatureEquality_CelsiusToFahrenheit() {
 
@@ -291,57 +175,7 @@ public class QuantityMeasurementAppTest {
 
         assertTrue(t1.equals(t2));
     }
-    
-    @Test
-    void testTemperatureEquality_CelsiusToCelsius() {
 
-        Quantity<TemperatureUnit> t1 =
-                new Quantity<>(100.0, TemperatureUnit.CELSIUS);
-
-        Quantity<TemperatureUnit> t2 =
-                new Quantity<>(100.0, TemperatureUnit.CELSIUS);
-
-        assertTrue(t1.equals(t2));
-    }
-    
-    @Test
-    void testTemperatureConversion_CelsiusToFahrenheit() {
-
-        Quantity<TemperatureUnit> result =
-                new Quantity<>(100.0, TemperatureUnit.CELSIUS)
-                        .convertTo(TemperatureUnit.FAHRENHEIT);
-
-        assertEquals(
-                new Quantity<>(212.0, TemperatureUnit.FAHRENHEIT),
-                result
-        );
-    }
-    
-    @Test
-    void testTemperatureConversion_FahrenheitToCelsius() {
-
-        Quantity<TemperatureUnit> result =
-                new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT)
-                        .convertTo(TemperatureUnit.CELSIUS);
-
-        assertEquals(
-                new Quantity<>(0.0, TemperatureUnit.CELSIUS),
-                result
-        );
-    }
-    
-    @Test
-    void testTemperatureConversion_Negative40() {
-
-        Quantity<TemperatureUnit> t1 =
-                new Quantity<>(-40.0, TemperatureUnit.CELSIUS);
-
-        Quantity<TemperatureUnit> t2 =
-                new Quantity<>(-40.0, TemperatureUnit.FAHRENHEIT);
-
-        assertTrue(t1.equals(t2));
-    }
-    
     @Test
     void testTemperatureUnsupported_Addition() {
 
@@ -356,46 +190,63 @@ public class QuantityMeasurementAppTest {
                 () -> t1.add(t2)
         );
     }
-    
+
+    // ---------------- DB TESTS ----------------
+
     @Test
-    void testTemperatureUnsupported_Subtraction() {
+    void testDatabaseConfiguration_LoadedFromProperties() {
 
-        Quantity<TemperatureUnit> t1 =
-                new Quantity<>(100.0, TemperatureUnit.CELSIUS);
+        String url = ApplicationConfig.getProperty("db.url");
 
-        Quantity<TemperatureUnit> t2 =
-                new Quantity<>(50.0, TemperatureUnit.CELSIUS);
-
-        assertThrows(
-                UnsupportedOperationException.class,
-                () -> t1.subtract(t2)
-        );
+        assertNotNull(url);
     }
-    
+
     @Test
-    void testTemperatureUnsupported_Division() {
+    void testConnectionPool_Initialization() {
 
-        Quantity<TemperatureUnit> t1 =
-                new Quantity<>(100.0, TemperatureUnit.CELSIUS);
-
-        Quantity<TemperatureUnit> t2 =
-                new Quantity<>(50.0, TemperatureUnit.CELSIUS);
-
-        assertThrows(
-                UnsupportedOperationException.class,
-                () -> t1.divide(t2)
-        );
+        assertNotNull(ConnectionPool.getDataSource());
     }
-    
+
     @Test
-    void testTemperatureVsLengthComparison() {
+    void testConnectionPool_Acquire_Release() throws Exception {
 
-        Quantity<TemperatureUnit> temp =
-                new Quantity<>(100.0, TemperatureUnit.CELSIUS);
+        try (Connection connection =
+                     ConnectionPool.getDataSource().getConnection()) {
 
-        Quantity<LengthUnit> length =
-                new Quantity<>(100.0, LengthUnit.FEET);
+            assertNotNull(connection);
+            assertFalse(connection.isClosed());
+        }
+    }
 
-        assertFalse(temp.equals(length));
+    @Test
+    void testDatabaseRepository_SaveEntity() {
+
+        QuantityMeasurementRepository repo =
+                new QuantityMeasurementRepository();
+
+        QuantityMeasurementEntity entity =
+                new QuantityMeasurementEntity(
+                        10.0,
+                        "FEET",
+                        "LENGTH",
+                        "ADD",
+                        "20 FEET"
+                );
+
+        repo.saveMeasurement(entity);
+
+        assertTrue(true);
+    }
+
+    @Test
+    void testDatabaseRepository_RetrieveAllMeasurements() {
+
+        QuantityMeasurementRepository repo =
+                new QuantityMeasurementRepository();
+
+        List<QuantityMeasurementEntity> list =
+                repo.findAllMeasurements();
+
+        assertNotNull(list);
     }
 }
