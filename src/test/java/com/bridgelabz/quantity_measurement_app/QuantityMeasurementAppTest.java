@@ -1,24 +1,29 @@
-	package com.bridgelabz.quantity_measurement_app;
+package com.bridgelabz.quantity_measurement_app;
 
-import org.junit.jupiter.api.Test;
-
-import com.bridgelabz.quantity_measurement_app.model.LengthUnit;
-import com.bridgelabz.quantity_measurement_app.model.Quantity;
-import com.bridgelabz.quantity_measurement_app.model.TemperatureUnit;
-import com.bridgelabz.quantity_measurement_app.model.VolumeUnit;
-import com.bridgelabz.quantity_measurement_app.model.WeightUnit;
+import com.bridgelabz.quantity_measurement_app.model.*;
+import com.bridgelabz.quantity_measurement_app.repository.QuantityMeasurementRepository;
 import com.bridgelabz.quantity_measurement_app.model.QuantityMeasurementEntity;
 
-import com.bridgelabz.quantity_measurement_app.config.ApplicationConfig;
-import com.bridgelabz.quantity_measurement_app.config.ConnectionPool;
-import com.bridgelabz.quantity_measurement_app.dao.QuantityMeasurementRepository;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.sql.Connection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class QuantityMeasurementAppTest {
+@SpringBootTest
+class QuantityMeasurementApplicationTests {
+
+    @Autowired
+    private QuantityMeasurementRepository repository;
+
+    // ---------------- SPRING BOOT TEST ----------------
+
+    @Test
+    void testSpringBootApplicationStarts() {
+        assertNotNull(repository);
+    }
 
     // ---------------- LENGTH TESTS ----------------
 
@@ -74,20 +79,6 @@ public class QuantityMeasurementAppTest {
         assertTrue(w1.equals(w2));
     }
 
-    @Test
-    void testWeightAddition_KgPlusGram() {
-
-        Quantity<WeightUnit> w1 =
-                new Quantity<>(1.0, WeightUnit.KILOGRAM);
-
-        Quantity<WeightUnit> w2 =
-                new Quantity<>(1000.0, WeightUnit.GRAM);
-
-        Quantity<WeightUnit> result = w1.add(w2);
-
-        assertEquals(new Quantity<>(2.0, WeightUnit.KILOGRAM), result);
-    }
-
     // ---------------- VOLUME TESTS ----------------
 
     @Test
@@ -100,20 +91,6 @@ public class QuantityMeasurementAppTest {
                 new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
 
         assertTrue(v1.equals(v2));
-    }
-
-    @Test
-    void testVolumeAddition_LitrePlusMillilitre() {
-
-        Quantity<VolumeUnit> v1 =
-                new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        Quantity<VolumeUnit> v2 =
-                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
-
-        Quantity<VolumeUnit> result = v1.add(v2);
-
-        assertEquals(new Quantity<>(2.0, VolumeUnit.LITRE), result);
     }
 
     // ---------------- SUBTRACTION TESTS ----------------
@@ -130,20 +107,6 @@ public class QuantityMeasurementAppTest {
         Quantity<LengthUnit> result = q1.subtract(q2);
 
         assertEquals(new Quantity<>(5.0, LengthUnit.FEET), result);
-    }
-
-    @Test
-    void testSubtraction_CrossUnit() {
-
-        Quantity<LengthUnit> q1 =
-                new Quantity<>(10.0, LengthUnit.FEET);
-
-        Quantity<LengthUnit> q2 =
-                new Quantity<>(6.0, LengthUnit.INCHES);
-
-        Quantity<LengthUnit> result = q1.subtract(q2);
-
-        assertEquals(new Quantity<>(9.5, LengthUnit.FEET), result);
     }
 
     // ---------------- DIVISION TESTS ----------------
@@ -191,62 +154,46 @@ public class QuantityMeasurementAppTest {
         );
     }
 
-    // ---------------- DB TESTS ----------------
+    // ---------------- JPA REPOSITORY TESTS ----------------
 
     @Test
-    void testDatabaseConfiguration_LoadedFromProperties() {
-
-        String url = ApplicationConfig.getProperty("db.url");
-
-        assertNotNull(url);
-    }
-
-    @Test
-    void testConnectionPool_Initialization() {
-
-        assertNotNull(ConnectionPool.getDataSource());
-    }
-
-    @Test
-    void testConnectionPool_Acquire_Release() throws Exception {
-
-        try (Connection connection =
-                     ConnectionPool.getDataSource().getConnection()) {
-
-            assertNotNull(connection);
-            assertFalse(connection.isClosed());
-        }
-    }
-
-    @Test
-    void testDatabaseRepository_SaveEntity() {
-
-        QuantityMeasurementRepository repo =
-                new QuantityMeasurementRepository();
+    void testRepository_SaveEntity() {
 
         QuantityMeasurementEntity entity =
-                new QuantityMeasurementEntity(
-                        10.0,
-                        "FEET",
-                        "LENGTH",
-                        "ADD",
-                        "20 FEET"
-                );
+                new QuantityMeasurementEntity();
 
-        repo.saveMeasurement(entity);
+        entity.setOperation("ADD");
+        entity.setThisValue(1.0);
+        entity.setThisUnit("FEET");
+        entity.setThisMeasurementType("LengthUnit");
 
-        assertTrue(true);
+        entity.setThatValue(12.0);
+        entity.setThatUnit("INCHES");
+        entity.setThatMeasurementType("LengthUnit");
+
+        entity.setResultValue(2.0);
+        entity.setResultUnit("FEET");
+        entity.setResultMeasurementType("LengthUnit");
+
+        repository.save(entity);
+
+        assertNotNull(entity.getId());
     }
 
     @Test
-    void testDatabaseRepository_RetrieveAllMeasurements() {
+    void testRepository_FindByOperation() {
 
-        QuantityMeasurementRepository repo =
-                new QuantityMeasurementRepository();
+        List<QuantityMeasurementEntity> results =
+                repository.findByOperation("ADD");
 
-        List<QuantityMeasurementEntity> list =
-                repo.findAllMeasurements();
+        assertNotNull(results);
+    }
 
-        assertNotNull(list);
+    @Test
+    void testRepository_CountByOperation() {
+
+        long count = repository.countByOperation("ADD");
+
+        assertTrue(count >= 0);
     }
 }

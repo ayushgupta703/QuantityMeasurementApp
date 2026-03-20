@@ -16,6 +16,14 @@ public class Quantity<T extends Measurable> {
         this.value = value;
         this.unit = unit;
     }
+    
+    public double getValue() {
+        return value;
+    }
+
+    public T getUnit() {
+        return unit;
+    }
 
     public Quantity<T> convertTo(T targetUnit) {
 
