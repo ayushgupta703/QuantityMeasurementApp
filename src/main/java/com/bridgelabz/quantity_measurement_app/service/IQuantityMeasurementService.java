@@ -15,7 +15,7 @@ public interface IQuantityMeasurementService {
 
     QuantityMeasurementDTO subtractQuantities(QuantityInputDTO input);
 
-    double divideQuantities(QuantityInputDTO input);
+    QuantityMeasurementDTO divideQuantities(QuantityInputDTO input);
 
     List<QuantityMeasurementDTO> getHistoryByOperation(String operation);
 

@@ -60,7 +60,7 @@ public class QuantityMeasurementController {
      * Divide quantities
      */
     @PostMapping("/divide")
-    public double divideQuantities(
+    public QuantityMeasurementDTO divideQuantities(
             @RequestBody QuantityInputDTO input) {
 
         return service.divideQuantities(input);

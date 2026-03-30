@@ -39,7 +39,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         });
 
         String token = jwtUtil.generateToken(user.getEmail());
-        response.setContentType("application/json");
-        response.getWriter().write("{\"Token\": \"" + token + "\"}");
+        response.sendRedirect("http://localhost:5173/oauth-success?token=" + token + "&email=" + user.getEmail());
     }
 }

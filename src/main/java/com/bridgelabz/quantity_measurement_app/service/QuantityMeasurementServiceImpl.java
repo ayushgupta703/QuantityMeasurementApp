@@ -225,12 +225,37 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
     }
 
     @Override
-    public double divideQuantities(QuantityInputDTO input) {
+    public QuantityMeasurementDTO divideQuantities(QuantityInputDTO input) {
 
         Quantity q1 = createQuantity(input.getThisQuantityDTO());
         Quantity q2 = createQuantity(input.getThatQuantityDTO());
 
-        return q1.divide(q2);
+        double result = q1.divide(q2);
+
+        QuantityMeasurementEntity entity = new QuantityMeasurementEntity();
+
+        // THIS quantity
+        entity.setThisValue(input.getThisQuantityDTO().getValue());
+        entity.setThisUnit(input.getThisQuantityDTO().getUnit());
+        entity.setThisMeasurementType(input.getThisQuantityDTO().getMeasurementType());
+
+        // THAT quantity
+        entity.setThatValue(input.getThatQuantityDTO().getValue());
+        entity.setThatUnit(input.getThatQuantityDTO().getUnit());
+        entity.setThatMeasurementType(input.getThatQuantityDTO().getMeasurementType());
+
+        entity.setOperation("DIVIDE");
+
+        entity.setResultValue(result);
+        entity.setResultUnit(input.getThisQuantityDTO().getUnit());
+        entity.setResultMeasurementType(
+                input.getThisQuantityDTO().getMeasurementType());
+
+        entity.setError(false);
+
+        repository.save(entity);
+
+        return buildDTO(entity);
     }
 
     @Override
