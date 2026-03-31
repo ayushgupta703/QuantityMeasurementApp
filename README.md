@@ -17,6 +17,27 @@ A production-grade Java backend application built using **Test Driven Developmen
 
 ---
 
+## ⚡ Quickstart (TL;DR)
+
+1. **Clone**
+   ```bash
+   git clone <this-repo-url>
+   cd QuantityMeasurementApp
+   ```
+2. **Configure database & secrets**
+   - Create a MySQL DB (e.g. `quantity_measurement_db`).
+   - Set DB + security properties (see **Configuration & Environment Variables** below).
+3. **Build & run**
+   ```bash
+   mvn clean install
+   mvn spring-boot:run
+   ```
+4. **Hit an API** 
+   - Conversion: `POST http://localhost:8080/convert`
+5. **(Secured APIs)** Obtain a JWT via login/OAuth2, then call protected endpoints with `Authorization: Bearer <token>`.
+
+---
+
 ## 📖 Project Evolution (UC1 → UC18)
 
 This project was built incrementally, following **use-case driven development**, where each UC introduced new concepts and architectural improvements.
@@ -120,6 +141,61 @@ This project was built incrementally, following **use-case driven development**,
 
 ---
 
+## 🛠️ Setup & Run
+
+### ✅ Prerequisites
+- **Java 17** or higher installed (`java -version`)
+- **Maven** installed (`mvn -version`)
+- **MySQL** running locally or accessible remotely
+
+### 🔧 Configure Database
+1. Create a MySQL database (for example: `quantity_measurement_db`).
+2. Update your Spring Boot configuration (typically `application.properties` or `application.yml`) with:
+   - DB URL
+   - Username
+   - Password
+3. Ensure any Flyway/Liquibase or schema initialization (if present) matches your DB name.
+
+### ▶️ Run the Application
+
+From the project root:
+
+```bash
+mvn clean install
+mvn spring-boot:run
+```
+
+By default, the app typically starts on `http://localhost:8080` (check your `server.port` if customized).
+
+### 🧪 Run Tests
+
+```bash
+mvn test
+```
+
+---
+
+## 🔧 Configuration & Environment Variables
+
+These are typical properties you’ll need to set (in `application.properties`, `application.yml`, or environment variables):
+
+- **Database**
+  - `SPRING_DATASOURCE_URL` / `spring.datasource.url`
+  - `SPRING_DATASOURCE_USERNAME` / `spring.datasource.username`
+  - `SPRING_DATASOURCE_PASSWORD` / `spring.datasource.password`
+- **JPA (optional but recommended)**
+  - `SPRING_JPA_HIBERNATE_DDL_AUTO` / `spring.jpa.hibernate.ddl-auto`
+  - `SPRING_JPA_SHOW_SQL` / `spring.jpa.show-sql`
+- **OAuth2 (Google) GIVEN IN application.yml (Need to create environment varibales for id and secret)**
+  - `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID`
+  - `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET`
+- **Server (optional)**
+  - `SERVER_PORT` / `server.port` (defaults to `8080` if not set)
+
+Use environment variables for secrets (JWT secret, DB password, OAuth client secret) instead of committing them to source control.
+
+---
+
 ## ⚙️ Architecture
 
 ```
@@ -130,6 +206,91 @@ Service
 Repository (JPA)
    ↓
 Database (MySQL)
+```
+
+---
+
+## 📡 API Usage
+
+### Public / Auth APIs
+
+| Endpoint | Method | Description |
+|---------|--------|-------------|
+| `/auth/register` | `POST` | Register a new user with email/password |
+| `/auth/login` | `POST` | Login and receive a JWT |
+| `/oauth2/authorization/google` | `GET` | Start Google OAuth2 login flow |
+
+**Sample login request**:
+
+```bash
+curl -X POST http://localhost:8080/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+        "email": "user@example.com",
+        "password": "password123"
+      }'
+```
+
+Response (simplified):
+
+```json
+{
+  "token": "<JWT_TOKEN>"
+}
+```
+
+Use the token in the `Authorization` header for protected endpoints:
+
+```bash
+Authorization: Bearer <JWT_TOKEN>
+```
+
+### Measurement APIs
+
+| Endpoint | Method | Description |
+|---------|--------|-------------|
+| `/convert` | `POST` | Convert from one unit to another |
+| `/add` | `POST` | Add two quantities (with unit normalization) |
+| `/history` | `GET` | Fetch stored operations/history *(secured)* |
+
+**Sample convert request**:
+
+```bash
+curl -X POST http://localhost:8080/convert \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <JWT_TOKEN>" \
+  -d '{
+        "thisQuantityDTO": {
+            "value": 1,
+            "unit": "FEET",
+            "measurementType": "LengthUnit"
+         },
+         "thatQuantityDTO": {
+            "value": 0,
+            "unit": "INCHES",
+            "measurementType": "LengthUnit"
+         }
+      }'
+```
+
+Response (example):
+
+```json
+{
+    "error": false,
+    "errorMessage": null,
+    "operation": "CONVERT",
+    "resultMeasurementType": "LengthUnit",
+    "resultString": null,
+    "resultUnit": "INCHES",
+    "resultValue": 12.0,
+    "thatMeasurementType": "LengthUnit",
+    "thatUnit": "INCHES",
+    "thatValue": 0.0,
+    "thisMeasurementType": "LengthUnit",
+    "thisUnit": "FEET",
+    "thisValue": 1.0
+}
 ```
 
 ---
