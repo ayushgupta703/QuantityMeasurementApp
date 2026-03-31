@@ -1,6 +1,6 @@
 # ⚖️ Quantity Measurement Application
 
-A production-grade Java backend application built using **Test Driven Development (TDD)** that evolves from a simple unit comparison utility into a **secure Spring Boot REST API** with database persistence and authentication.
+A production-grade Java backend application built using **Development Driven Testing (DDT)** that evolves from a simple unit comparison utility into a **secure Spring Boot REST API** with database persistence and authentication.
 
 ---
 
@@ -21,7 +21,7 @@ A production-grade Java backend application built using **Test Driven Developmen
 
 1. **Clone**
    ```bash
-   git clone <this-repo-url>
+   git clone https://github.com/ayushgupta703/QuantityMeasurementApp.git
    cd QuantityMeasurementApp
    ```
 2. **Configure database & secrets**
@@ -33,8 +33,19 @@ A production-grade Java backend application built using **Test Driven Developmen
    mvn spring-boot:run
    ```
 4. **Hit an API** 
-   - Conversion: `POST http://localhost:8080/convert`
+   - Conversion: `POST http://localhost:8081/api/v1/quantities/convert`
 5. **(Secured APIs)** Obtain a JWT via login/OAuth2, then call protected endpoints with `Authorization: Bearer <token>`.
+
+---
+
+## 🔗 Frontend Integration
+
+This backend is fully integrated with a React frontend application.
+
+Frontend Repository:
+https://github.com/ayushgupta703/QuantityMeasurementApp-Frontend
+
+Make sure the backend is running before starting the frontend.
 
 ---
 
@@ -165,7 +176,7 @@ mvn clean install
 mvn spring-boot:run
 ```
 
-By default, the app typically starts on `http://localhost:8080` (check your `server.port` if customized).
+By default, the app typically starts on `http://localhost:8081` (check your `server.port` if customized).
 
 ### 🧪 Run Tests
 
@@ -186,11 +197,11 @@ These are typical properties you’ll need to set (in `application.properties`, 
 - **JPA (optional but recommended)**
   - `SPRING_JPA_HIBERNATE_DDL_AUTO` / `spring.jpa.hibernate.ddl-auto`
   - `SPRING_JPA_SHOW_SQL` / `spring.jpa.show-sql`
-- **OAuth2 (Google) GIVEN IN application.yml (Need to create environment varibales for id and secret)**
+- **OAuth2 (Google) Defined in `application.yml` (use environment variables for client ID and secret)**
   - `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID`
   - `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET`
 - **Server (optional)**
-  - `SERVER_PORT` / `server.port` (defaults to `8080` if not set)
+  - `SERVER_PORT` / `server.port` (defaults to `8081` if not set)
 
 Use environment variables for secrets (JWT secret, DB password, OAuth client secret) instead of committing them to source control.
 
@@ -223,7 +234,7 @@ Database (MySQL)
 **Sample login request**:
 
 ```bash
-curl -X POST http://localhost:8080/auth/login \
+curl -X POST http://localhost:8081/auth/login \
   -H "Content-Type: application/json" \
   -d '{
         "email": "user@example.com",
@@ -245,7 +256,7 @@ Use the token in the `Authorization` header for protected endpoints:
 Authorization: Bearer <JWT_TOKEN>
 ```
 
-### Measurement APIs
+### 🔒 Secured Measurement APIs (Require JWT)
 
 | Endpoint | Method | Description |
 |---------|--------|-------------|
@@ -256,21 +267,21 @@ Authorization: Bearer <JWT_TOKEN>
 **Sample convert request**:
 
 ```bash
-curl -X POST http://localhost:8080/convert \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <JWT_TOKEN>" \
-  -d '{
-        "thisQuantityDTO": {
-            "value": 1,
-            "unit": "FEET",
-            "measurementType": "LengthUnit"
-         },
-         "thatQuantityDTO": {
-            "value": 0,
-            "unit": "INCHES",
-            "measurementType": "LengthUnit"
-         }
-      }'
+POST http://localhost:8081/api/v1/quantities/convert \
+  "Content-Type: application/json" \
+  "Authorization: Bearer <JWT_TOKEN>" \
+  {
+    "thisQuantityDTO": {
+      "value": 1,
+      "unit": "FEET",
+      "measurementType": "LengthUnit"
+    },
+    "thatQuantityDTO": {
+      "value": 0,
+      "unit": "INCHES",
+      "measurementType": "LengthUnit"
+    }
+  }
 ```
 
 Response (example):
@@ -295,14 +306,21 @@ Response (example):
 
 ---
 
+### 📄 API Documentation
+
+Swagger UI available at:
+http://localhost:8081/swagger-ui/index.html
+
+---
+
 ## 📐 Supported Measurement Types
 
 | Category | Units |
 |----------|------|
-| Length | Feet, Inch, Yard |
-| Weight | Kilogram, Gram, Pound |
-| Volume | Litre, Millilitre, Gallon |
-| Temperature | Celsius, Fahrenheit *(no arithmetic)* |
+| Length | FEET, INCHES, YARDS, CENTIMETERS |
+| Weight | KILOGRAM, GRAM, POUND |
+| Volume | LITRE, MILLILITRE, GALLON |
+| Temperature | CELSIUS, FAHRENHEIT *(no arithmetic)* |
 
 ---
 
