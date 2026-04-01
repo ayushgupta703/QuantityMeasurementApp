@@ -4,7 +4,10 @@ import com.bridgelabz.quantity_measurement_app.dto.*;
 import com.bridgelabz.quantity_measurement_app.model.*;
 import com.bridgelabz.quantity_measurement_app.repository.QuantityMeasurementRepository;
 
+import com.bridgelabz.quantity_measurement_app.user.User;
+import com.bridgelabz.quantity_measurement_app.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +19,27 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
     @Autowired
     private QuantityMeasurementRepository repository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private User getLoggedInUserOrNull() {
+        try {
+            String email = SecurityContextHolder
+                    .getContext()
+                    .getAuthentication()
+                    .getName();
+
+            if (email == null || email.equals("anonymousUser")) {
+                return null;
+            }
+
+            return userRepository.findByEmail(email).orElse(null);
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     /**
      * Convert DTO → Quantity<T>
@@ -92,7 +116,12 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         entity.setResultString(String.valueOf(result));
         entity.setError(false);
 
-        repository.save(entity);
+        User user = getLoggedInUserOrNull();
+
+        if (user != null) {
+            entity.setUser(user);
+            repository.save(entity);
+        }
 
         return buildDTO(entity);
     }
@@ -151,7 +180,12 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
         entity.setError(false);
 
-        repository.save(entity);
+        User user = getLoggedInUserOrNull();
+
+        if (user != null) {
+            entity.setUser(user);
+            repository.save(entity);
+        }
 
         return buildDTO(entity);
     }
@@ -185,7 +219,12 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
         entity.setError(false);
 
-        repository.save(entity);
+        User user = getLoggedInUserOrNull();
+
+        if (user != null) {
+            entity.setUser(user);
+            repository.save(entity);
+        }
 
         return buildDTO(entity);
     }
@@ -219,7 +258,12 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
         entity.setError(false);
 
-        repository.save(entity);
+        User user = getLoggedInUserOrNull();
+
+        if (user != null) {
+            entity.setUser(user);
+            repository.save(entity);
+        }
 
         return buildDTO(entity);
     }
@@ -253,15 +297,31 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
         entity.setError(false);
 
-        repository.save(entity);
+        User user = getLoggedInUserOrNull();
+
+        if (user != null) {
+            entity.setUser(user);
+            repository.save(entity);
+        }
 
         return buildDTO(entity);
     }
 
     @Override
-    public List<QuantityMeasurementDTO> getHistoryByOperation(String operation) {
+    public List<QuantityMeasurementDTO> getAllHistory() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return repository.findByOperation(operation)
+        return repository.findByUserEmail(email)
+                .stream()
+                .map(this::buildDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<QuantityMeasurementDTO> getHistoryByOperation(String operation) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return repository.findByUserEmailAndOperation(email, operation)
                 .stream()
                 .map(this::buildDTO)
                 .collect(Collectors.toList());
@@ -269,8 +329,9 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
     @Override
     public List<QuantityMeasurementDTO> getHistoryByMeasurementType(String measurementType) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return repository.findByThisMeasurementType(measurementType)
+        return repository.findByUserEmailAndThisMeasurementType(email, measurementType)
                 .stream()
                 .map(this::buildDTO)
                 .collect(Collectors.toList());

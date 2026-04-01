@@ -16,49 +16,40 @@ public class QuantityMeasurementController {
     @Autowired
     private IQuantityMeasurementService service;
 
-    /**
-     * Compare two quantities
-     */
-    @PostMapping("/compare")
+    // Public Operations
+    // Compare two quantities
+    @PostMapping("/operation/compare")
     public QuantityMeasurementDTO compareQuantities(
             @RequestBody QuantityInputDTO input) {
 
         return service.compareQuantities(input);
     }
 
-    /**
-     * Convert quantity
-     */
-    @PostMapping("/convert")
+    // Convert quantities
+    @PostMapping("/operation/convert")
     public QuantityMeasurementDTO convertQuantity(
             @RequestBody QuantityInputDTO input) {
 
         return service.convertQuantity(input);
     }
 
-    /**
-     * Add quantities
-     */
-    @PostMapping("/add")
+    // Add quantities
+    @PostMapping("/operation/add")
     public QuantityMeasurementDTO addQuantities(
             @RequestBody QuantityInputDTO input) {
 
         return service.addQuantities(input);
     }
 
-    /**
-     * Subtract quantities
-     */
-    @PostMapping("/subtract")
+    // Subtract quantities
+    @PostMapping("/operation/subtract")
     public QuantityMeasurementDTO subtractQuantities(
             @RequestBody QuantityInputDTO input) {
 
         return service.subtractQuantities(input);
     }
 
-    /**
-     * Divide quantities
-     */
+    // Divide quantities
     @PostMapping("/divide")
     public QuantityMeasurementDTO divideQuantities(
             @RequestBody QuantityInputDTO input) {
@@ -66,9 +57,13 @@ public class QuantityMeasurementController {
         return service.divideQuantities(input);
     }
 
-    /**
-     * Get history by operation
-     */
+    // Get full history
+    @GetMapping("/history")
+    public List<QuantityMeasurementDTO> getAllHistory() {
+        return service.getAllHistory();
+    }
+
+    // Get history by operation
     @GetMapping("/history/operation/{operation}")
     public List<QuantityMeasurementDTO> getHistoryByOperation(
             @PathVariable String operation) {
@@ -76,9 +71,7 @@ public class QuantityMeasurementController {
         return service.getHistoryByOperation(operation);
     }
 
-    /**
-     * Get history by measurement type
-     */
+    // Get history by measurement type
     @GetMapping("/history/type/{type}")
     public List<QuantityMeasurementDTO> getHistoryByMeasurementType(
             @PathVariable String type) {
@@ -86,9 +79,7 @@ public class QuantityMeasurementController {
         return service.getHistoryByMeasurementType(type);
     }
 
-    /**
-     * Count operations
-     */
+    // Count operations
     @GetMapping("/count/{operation}")
     public long getOperationCount(
             @PathVariable String operation) {
