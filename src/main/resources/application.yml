@@ -1,0 +1,13 @@
+# GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET value are stored in the Environment Variables of the IDE (Eclipse/IntelliJ IDEA)
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
