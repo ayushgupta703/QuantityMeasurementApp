@@ -17,6 +17,8 @@ public interface IQuantityMeasurementService {
 
     QuantityMeasurementDTO divideQuantities(QuantityInputDTO input);
 
+    List<QuantityMeasurementDTO> getAllHistory();
+
     List<QuantityMeasurementDTO> getHistoryByOperation(String operation);
 
     List<QuantityMeasurementDTO> getHistoryByMeasurementType(String measurementType);
