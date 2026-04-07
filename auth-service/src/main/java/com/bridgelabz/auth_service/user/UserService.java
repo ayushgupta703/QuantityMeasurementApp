@@ -16,9 +16,6 @@ public class UserService {
     }
 
     public User register(User user) {
-        System.out.println("USER: " + user);
-        System.out.println("PASSWORD: " + user.getPassword());
-        
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
