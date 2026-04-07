@@ -1,6 +1,6 @@
 # ⚖️ Quantity Measurement Application
 
-A production-grade Java backend application built using **Development Driven Testing (DDT)** that evolves from a simple unit comparison utility into a **secure Spring Boot REST API** with database persistence and authentication.
+A production-grade Java backend application built using **Development Driven Testing (DDT)** that evolves from a simple unit comparison utility into a **secure microservices-based Spring Boot system** with database persistence and authentication.
 
 ---
 
@@ -8,48 +8,51 @@ A production-grade Java backend application built using **Development Driven Tes
 
 ![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?style=flat-square)
+![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-Microservices-blue?style=flat-square)
 ![MySQL](https://img.shields.io/badge/MySQL-Database-blue?style=flat-square)
 ![JPA](https://img.shields.io/badge/Spring%20Data-JPA-green?style=flat-square)
 ![JWT](https://img.shields.io/badge/JWT-Authentication-black?style=flat-square)
 ![OAuth2](https://img.shields.io/badge/OAuth2-Google-red?style=flat-square)
 ![Maven](https://img.shields.io/badge/Maven-Build-red?style=flat-square)
-![JUnit](https://img.shields.io/badge/JUnit-5-yellow?style=flat-square)
 
 ---
 
-## ⚡ Quickstart (TL;DR)
+## ⚡ Quickstart (Microservices)
 
 1. **Clone**
-   ```bash
-   git clone https://github.com/ayushgupta703/QuantityMeasurementApp.git
-   cd QuantityMeasurementApp
-   ```
-2. **Configure database & secrets**
-   - Create a MySQL DB (e.g. `quantity_measurement_db`).
-   - Set DB + security properties (see **Configuration & Environment Variables** below).
-3. **Build & run**
-   ```bash
-   mvn clean install
-   mvn spring-boot:run
-   ```
-4. **Hit an API** 
-   - Conversion: `POST http://localhost:8081/api/v1/quantities/convert`
-5. **(Secured APIs)** Obtain a JWT via login/OAuth2, then call protected endpoints with `Authorization: Bearer <token>`.
+
+```bash
+git clone https://github.com/ayushgupta703/QuantityMeasurementApp.git
+cd QuantityMeasurementApp
+```
+
+2. **Start Services (IMPORTANT ORDER)**
+
+```text
+1. Eureka Server
+2. Auth Service
+3. Measurement Service
+4. API Gateway
+```
+
+3. **Access APIs via Gateway**
+
+```text
+http://localhost:8082
+```
 
 ---
 
 ## 🔗 Frontend Integration
 
-This backend is fully integrated with a React frontend application.
-
 Frontend Repository:
 https://github.com/ayushgupta703/QuantityMeasurementApp-Frontend
 
-Make sure the backend is running before starting the frontend.
+👉 Frontend communicates ONLY via API Gateway.
 
 ---
 
-## 📖 Project Evolution (UC1 → UC18)
+## 📖 Project Evolution (UC1 → UC21)
 
 This project was built incrementally, following **use-case driven development**, where each UC introduced new concepts and architectural improvements.
 
@@ -127,237 +130,154 @@ This project was built incrementally, following **use-case driven development**,
 |----|------------|
 | UC18 | Secure backend with JWT & Google OAuth2 |
 
----
-
-## 🔐 Authentication & Security
-
-### ✅ Local Authentication
-- User Registration (email + password)
-- Password encryption using **BCrypt**
-
-### ✅ JWT Authentication
-- Stateless authentication
-- Token-based access
-- Custom JWT filter for request validation
-
-### ✅ Google OAuth2 Login
-- Social login integration
-- Auto user registration
-- Unified JWT flow after login
-
-### ✅ Security Features
-- Protected endpoints
-- Stateless session management
-- Secure environment variables for secrets
+*(Same as your existing content — unchanged)*
 
 ---
 
-## 🛠️ Setup & Run
+## 🖥️ Phase 7 — Frontend Integration (UC19–UC20)
 
-### ✅ Prerequisites
-- **Java 17** or higher installed (`java -version`)
-- **Maven** installed (`mvn -version`)
-- **MySQL** running locally or accessible remotely
-
-### 🔧 Configure Database
-1. Create a MySQL database (for example: `quantity_measurement_db`).
-2. Update your Spring Boot configuration (typically `application.properties` or `application.yml`) with:
-   - DB URL
-   - Username
-   - Password
-3. Ensure any Flyway/Liquibase or schema initialization (if present) matches your DB name.
-
-### ▶️ Run the Application
-
-From the project root:
-
-```bash
-mvn clean install
-mvn spring-boot:run
-```
-
-By default, the app typically starts on `http://localhost:8081` (check your `server.port` if customized).
-
-### 🧪 Run Tests
-
-```bash
-mvn test
-```
+* React + Vite frontend
+* Dashboard UI
+* API integration
+* Authentication handling
 
 ---
 
-## 🔧 Configuration & Environment Variables
+## 🌐 Phase 8 — Microservices Architecture (UC21)
 
-These are typical properties you’ll need to set (in `application.properties`, `application.yml`, or environment variables):
-
-- **Database**
-  - `SPRING_DATASOURCE_URL` / `spring.datasource.url`
-  - `SPRING_DATASOURCE_USERNAME` / `spring.datasource.username`
-  - `SPRING_DATASOURCE_PASSWORD` / `spring.datasource.password`
-- **JPA (optional but recommended)**
-  - `SPRING_JPA_HIBERNATE_DDL_AUTO` / `spring.jpa.hibernate.ddl-auto`
-  - `SPRING_JPA_SHOW_SQL` / `spring.jpa.show-sql`
-- **OAuth2 (Google) Defined in `application.yml` (use environment variables for client ID and secret)**
-  - `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID`
-  - `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET`
-- **Server (optional)**
-  - `SERVER_PORT` / `server.port` (defaults to `8081` if not set)
-
-Use environment variables for secrets (JWT secret, DB password, OAuth client secret) instead of committing them to source control.
+The application was refactored from a **monolithic architecture** into a **microservices-based system** using Spring Cloud.
 
 ---
 
-## ⚙️ Architecture
+# ⚙️ Microservices Architecture
 
-```
-Controller
-   ↓
-Service
-   ↓
-Repository (JPA)
-   ↓
-Database (MySQL)
+## 🧩 Services
+
+### 🔐 Auth Service
+
+* Handles user authentication
+* JWT generation & validation
+* Google OAuth2 login
+* User management
+
+---
+
+### ⚙️ Measurement Service
+
+* Handles all quantity operations
+* Public + protected APIs
+* Stores user-specific history
+
+---
+
+### 🌐 API Gateway
+
+* Single entry point
+* Routes requests to services
+* Handles CORS
+* Preserves JWT across services
+
+---
+
+### 📡 Eureka Server
+
+* Service discovery
+* Dynamic service registration
+
+---
+
+# 🔄 System Flow
+
+```text
+Frontend → API Gateway → Eureka → Services → Database
 ```
 
 ---
 
-## 📡 API Usage
+# 🔐 Authentication Flow
 
-### Public / Auth APIs
-
-| Endpoint | Method | Description |
-|---------|--------|-------------|
-| `/auth/register` | `POST` | Register a new user with email/password |
-| `/auth/login` | `POST` | Login and receive a JWT |
-| `/oauth2/authorization/google` | `GET` | Start Google OAuth2 login flow |
-
-**Sample login request**:
-
-```bash
-curl -X POST http://localhost:8081/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-        "email": "user@example.com",
-        "password": "password123"
-      }'
-```
-
-Response (simplified):
-
-```json
-{
-  "token": "<JWT_TOKEN>"
-}
-```
-
-Use the token in the `Authorization` header for protected endpoints:
-
-```bash
-Authorization: Bearer <JWT_TOKEN>
-```
-
-### 🔒 Secured Measurement APIs (Require JWT)
-
-| Endpoint | Method | Description |
-|---------|--------|-------------|
-| `/convert` | `POST` | Convert from one unit to another |
-| `/add` | `POST` | Add two quantities (with unit normalization) |
-| `/history` | `GET` | Fetch stored operations/history *(secured)* |
-
-**Sample convert request**:
-
-```bash
-POST http://localhost:8081/api/v1/quantities/convert \
-  "Content-Type: application/json" \
-  "Authorization: Bearer <JWT_TOKEN>" \
-  {
-    "thisQuantityDTO": {
-      "value": 1,
-      "unit": "FEET",
-      "measurementType": "LengthUnit"
-    },
-    "thatQuantityDTO": {
-      "value": 0,
-      "unit": "INCHES",
-      "measurementType": "LengthUnit"
-    }
-  }
-```
-
-Response (example):
-
-```json
-{
-    "error": false,
-    "errorMessage": null,
-    "operation": "CONVERT",
-    "resultMeasurementType": "LengthUnit",
-    "resultString": null,
-    "resultUnit": "INCHES",
-    "resultValue": 12.0,
-    "thatMeasurementType": "LengthUnit",
-    "thatUnit": "INCHES",
-    "thatValue": 0.0,
-    "thisMeasurementType": "LengthUnit",
-    "thisUnit": "FEET",
-    "thisValue": 1.0
-}
+```text
+Login → Auth Service → JWT
+Frontend stores token
+Frontend → Gateway → Services (with JWT)
+Services validate token independently
 ```
 
 ---
 
-### 📄 API Documentation
+# 🔑 Key Features
 
-Swagger UI available at:
-http://localhost:8081/swagger-ui/index.html
-
----
-
-## 📐 Supported Measurement Types
-
-| Category | Units |
-|----------|------|
-| Length | FEET, INCHES, YARDS, CENTIMETERS |
-| Weight | KILOGRAM, GRAM, POUND |
-| Volume | LITRE, MILLILITRE, GALLON |
-| Temperature | CELSIUS, FAHRENHEIT *(no arithmetic)* |
+```
+✔ Microservices architecture
+✔ Service discovery (Eureka)
+✔ API Gateway routing
+✔ JWT-based authentication
+✔ Google OAuth2 login
+✔ Stateless security
+✔ User-specific data isolation
+✔ Frontend + backend integration
+```
 
 ---
 
-## 📊 Key Features
+# ⚙️ Configuration
 
-✔ Unit conversion across multiple measurement types  
-✔ Arithmetic operations with normalization  
-✔ Generic and scalable architecture  
-✔ RESTful APIs  
-✔ Database persistence  
-✔ JWT-based authentication  
-✔ Google OAuth login  
-✔ Global exception handling  
-✔ Clean layered architecture  
+## Required Environment Variables
 
----
+### Database
 
-## 🧠 Concepts Covered
+* `SPRING_DATASOURCE_URL`
+* `SPRING_DATASOURCE_USERNAME`
+* `SPRING_DATASOURCE_PASSWORD`
 
-- Development-Driven Test (DDT)
-- Object-Oriented Design (Generics, Enums, Interfaces)
-- SOLID Principles
-- DRY Principle
-- Functional Programming (Lambdas)
-- N-Tier Architecture
-- JDBC & Connection Pooling
-- Spring Boot & Dependency Injection
-- Spring Data JPA (ORM)
-- REST API Design
-- Exception Handling
-- Authentication & Authorization (JWT, OAuth2)
+### JWT
+
+* `JWT_SECRET`
+
+### OAuth2 (Google)
+
+* `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID`
+* `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET`
 
 ---
 
-## 🎯 One-Line Summary
+# 📡 API Access (via Gateway)
 
-> Started as an OOP-based unit conversion system, evolved into a scalable generic measurement engine, then transformed into a Spring Boot REST application with database persistence, and finally secured using JWT and Google OAuth2.
+## 🔐 Auth APIs
+
+| Endpoint                                    | Method |
+| ------------------------------------------- | ------ |
+| `/auth-service/auth/login`                  | POST   |
+| `/auth-service/auth/register`               | POST   |
+| `/auth-service/oauth2/authorization/google` | GET    |
+
+---
+
+## ⚙️ Measurement APIs
+
+| Endpoint                                             | Method | Access    |
+| ---------------------------------------------------- | ------ | --------- |
+| `/measurement-service/api/v1/quantities/operation/*` | POST   | Public    |
+| `/measurement-service/api/v1/quantities/history`     | GET    | Protected |
+
+---
+
+# 🧠 Concepts Covered
+
+* Microservices Architecture
+* API Gateway Pattern
+* Service Discovery (Eureka)
+* JWT Authentication
+* OAuth2 Integration
+* Spring Cloud
+* REST API Design
+* Distributed Systems Basics
+
+---
+
+# 🎯 One-Line Summary
+
+> Started as an OOP-based unit conversion system, evolved into a scalable backend, and finally transformed into a secure microservices architecture using Spring Boot, Spring Cloud, JWT, and OAuth2.
 
 ---
 
