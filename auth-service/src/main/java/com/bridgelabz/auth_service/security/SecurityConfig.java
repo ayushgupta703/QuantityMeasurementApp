@@ -25,8 +25,9 @@ public class SecurityConfig {
         http
                 .cors(cors -> {})
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/auth/**", "/oauth2/**", "/login/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth ->oauth.successHandler(oAuth2SuccessHandler))

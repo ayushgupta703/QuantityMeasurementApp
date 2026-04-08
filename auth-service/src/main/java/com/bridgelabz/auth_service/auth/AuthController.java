@@ -23,6 +23,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public User register(@RequestBody RegisterRequest request) {
+        System.out.println("Register hit success.");
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());

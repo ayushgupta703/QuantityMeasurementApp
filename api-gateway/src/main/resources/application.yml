@@ -1,8 +1,14 @@
 spring:
   cloud:
     gateway:
+
+      # ✅ GLOBAL FILTERS (IMPORTANT)
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+
       routes:
 
+        # 🔐 AUTH SERVICE (REGISTER + LOGIN)
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
@@ -10,11 +16,13 @@ spring:
           filters:
             - StripPrefix=1
 
+        # 🔐 OAUTH ROUTES (DO NOT STRIP)
         - id: auth-oauth
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/oauth2/**, /login/**
 
+        # ⚙️ MEASUREMENT SERVICE
         - id: measurement-service
           uri: lb://MEASUREMENT-SERVICE
           predicates:
