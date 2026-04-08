@@ -24,8 +24,14 @@ public class AuthController {
     @PostMapping("/register")
     public User register(@RequestBody RegisterRequest request) {
 
-        System.out.println("==== REQUEST ====");
-        System.out.println(request);
+        System.out.println("==== CONTROLLER HIT ====");
+        System.out.println("REQUEST OBJECT: " + request);
+
+        if (request == null) {
+            System.out.println("REQUEST IS NULL ❌");
+            throw new RuntimeException("Request is null");
+        }
+
         System.out.println("NAME: " + request.getName());
         System.out.println("EMAIL: " + request.getEmail());
         System.out.println("PASSWORD: " + request.getPassword());
