@@ -23,12 +23,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public User register(@RequestBody RegisterRequest request) {
-        System.out.println("Register hit success.");
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
-        return userService.register(user);
+
+        User savedUser = userService.register(user);
+        savedUser.setPassword(null);
+        return savedUser;
     }
 
     @PostMapping("/login")
