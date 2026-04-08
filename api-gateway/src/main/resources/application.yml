@@ -10,7 +10,7 @@ spring:
 
         # 🔐 AUTH SERVICE (REGISTER + LOGIN)
         - id: auth-service
-          uri: lb://AUTH-SERVICE
+          uri: lb://auth-service
           predicates:
             - Path=/auth/**
           filters:
@@ -18,12 +18,12 @@ spring:
 
         # 🔐 OAUTH ROUTES (DO NOT STRIP)
         - id: auth-oauth
-          uri: lb://AUTH-SERVICE
+          uri: lb://auth-service
           predicates:
             - Path=/oauth2/**, /login/**
 
         # ⚙️ MEASUREMENT SERVICE
         - id: measurement-service
-          uri: lb://MEASUREMENT-SERVICE
+          uri: lb://measurement-service
           predicates:
             - Path=/api/**
