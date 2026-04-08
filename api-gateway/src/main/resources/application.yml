@@ -1,5 +1,12 @@
 spring:
+  codec:
+    max-in-memory-size: 10MB
+
   cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+
     gateway:
 
       # ✅ GLOBAL FILTERS (IMPORTANT)
@@ -13,6 +20,10 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/auth/**
+          filters:
+            - name: Retry
+              args:
+                retries: 3
 
         # 🔐 OAUTH ROUTES (DO NOT STRIP)
         - id: auth-oauth
@@ -25,3 +36,4 @@ spring:
           uri: lb://measurement-service
           predicates:
             - Path=/api/**
+
