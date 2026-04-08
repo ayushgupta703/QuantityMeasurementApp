@@ -23,14 +23,19 @@ public class AuthController {
 
     @PostMapping("/register")
     public User register(@RequestBody RegisterRequest request) {
+
+        System.out.println("==== REQUEST ====");
+        System.out.println(request);
+        System.out.println("NAME: " + request.getName());
+        System.out.println("EMAIL: " + request.getEmail());
+        System.out.println("PASSWORD: " + request.getPassword());
+
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
 
-        User savedUser = userService.register(user);
-        savedUser.setPassword(null);
-        return savedUser;
+        return userService.register(user);
     }
 
     @PostMapping("/login")
