@@ -1,5 +1,6 @@
 package com.bridgelabz.auth_service.auth;
 
+import com.bridgelabz.auth_service.dto.RegisterRequest;
 import com.bridgelabz.auth_service.security.JwtUtil;
 import com.bridgelabz.auth_service.user.User;
 import com.bridgelabz.auth_service.user.UserService;
@@ -21,7 +22,11 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
+    public User register(@RequestBody RegisterRequest request) {
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
         return userService.register(user);
     }
 
