@@ -17,7 +17,7 @@ spring:
 
         # 🔐 AUTH SERVICE (REGISTER + LOGIN)
         - id: auth-service
-          uri: lb://auth-service
+          uri: https://quantitymeasurementapp-authservice-production.up.railway.app
           predicates:
             - Path=/auth/**
           filters:
@@ -25,15 +25,15 @@ spring:
               args:
                 retries: 3
 
-        # 🔐 OAUTH ROUTES (DO NOT STRIP)
+        # 🔐 OAUTH ROUTES
         - id: auth-oauth
-          uri: lb://auth-service
+          uri: https://quantitymeasurementapp-authservice-production.up.railway.app
           predicates:
             - Path=/oauth2/**, /login/**
 
         # ⚙️ MEASUREMENT SERVICE
         - id: measurement-service
-          uri: lb://measurement-service
+          uri: https://quantitymeasurementapp-measurementservice-production.up.railway.app
           predicates:
             - Path=/api/**
 
