@@ -8,18 +8,14 @@ spring:
           predicates:
             - Path=/auth/**
           filters:
-            - PreserveHostHeader
+            - StripPrefix=1
 
         - id: auth-oauth
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/oauth2/**, /login/**
-          filters:
-            - PreserveHostHeader
 
         - id: measurement-service
           uri: lb://MEASUREMENT-SERVICE
           predicates:
             - Path=/api/**
-          filters:
-            - PreserveHostHeader
