@@ -1,25 +1,25 @@
 spring:
-  application:
-    name: api-gateway
-
   cloud:
     gateway:
       routes:
 
-        # 🔐 AUTH SERVICE
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/auth/**
+          filters:
+            - PreserveHostHeader
 
-        # 🔐 OAUTH (VERY IMPORTANT)
         - id: auth-oauth
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/oauth2/**, /login/**
+          filters:
+            - PreserveHostHeader
 
-        # ⚙️ MEASUREMENT SERVICE
         - id: measurement-service
           uri: lb://MEASUREMENT-SERVICE
           predicates:
             - Path=/api/**
+          filters:
+            - PreserveHostHeader
