@@ -19,7 +19,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // ✅ Allow frontend origin
-        config.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173"));
+        config.setAllowedOriginPatterns(Arrays.asList("https://quantity-measurement-app-frontend-jet.vercel.app"));
 
         // ✅ Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
         config.setAllowedMethods(Arrays.asList(

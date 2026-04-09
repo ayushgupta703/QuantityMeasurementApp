@@ -39,6 +39,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         });
 
         String token = jwtUtil.generateToken(user.getEmail());
-        response.sendRedirect("http://localhost:5173/oauth-success?token=" + token + "&email=" + user.getEmail());
+        response.sendRedirect("https://quantity-measurement-app-frontend-jet.vercel.appoauth-success?token=" + token + "&email=" + user.getEmail());
     }
 }
